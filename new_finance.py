@@ -57,7 +57,15 @@ else:
     st.header(f"Траты по категории '{selected_category}' за выбранные фильтры: {traty_total:,.0f}".replace(",", " "))
 
 # Группировка и визуализация данных после фильтрации
-traty_grouped = traty_filtered.groupby('Категория')['Сумма'].sum().reset_index().sort_values('Сумма', ascending=False)
+if len(selected_years) > 1 or len(selected_months) > 1:
+    # Группировка по категории, году и месяцу, если выбрано несколько лет или месяцев
+    traty_grouped = traty_filtered.groupby(['Категория', 'Год', 'Месяц'])['Сумма'].sum().reset_index().sort_values('Сумма', ascending=False)
+else:
+    # Группировка только по категории
+    traty_grouped = traty_filtered.groupby('Категория')['Сумма'].sum().reset_index().sort_values('Сумма', ascending=False)
+    traty_grouped['Год'] = traty_filtered['Год'].unique()[0]
+    traty_grouped['Месяц'] = traty_filtered['Месяц'].unique()[0] if len(traty_filtered['Месяц'].unique()) == 1 else "Все месяцы"
+
 traty_grouped['Процент'] = (traty_grouped['Сумма'] / traty_total) * 100
 
 # Фильтрация категорий для отображения в круговой диаграмме (ограничение по проценту)
@@ -68,7 +76,9 @@ if other_sum > 0:
     traty_above_5 = pd.concat([traty_above_5, pd.DataFrame({
         'Категория': ['Другие'], 
         'Сумма': [other_sum], 
-        'Процент': [other_sum / traty_total * 100]
+        'Процент': [other_sum / traty_total * 100],
+        'Год': ['—'], 
+        'Месяц': ['—']
     })])
 
 # Построение круговой диаграммы
@@ -85,9 +95,9 @@ for i, (wedge, row) in enumerate(zip(wedges, traty_above_5.itertuples())):
 
 st.pyplot(plt)
 
-# Вывод таблицы с форматированием для отображения целых чисел с пробелами между тысячными единицами
+# Вывод таблицы с добавленными колонками "Год" и "Месяц" и форматированием для целых чисел с пробелами
 st.dataframe(
-    traty_above_5.drop(columns=['Процент']).reset_index(drop=True).style.format(
+    traty_above_5[['Категория', 'Год', 'Месяц', 'Сумма']].reset_index(drop=True).style.format(
         {'Сумма': lambda x: f"{x:,.0f}".replace(",", " ")}
     ), 
     use_container_width=True
