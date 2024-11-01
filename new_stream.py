@@ -5,12 +5,10 @@ import matplotlib.pyplot as plt
 from math import cos, sin, pi
 
 # Пример данных (замените на свои)
-traty = pd.DataFrame({
-    'Год': [2024, 2024, 2024, 2023, 2023, 2023],
-    'Месяц': [7, 7, 6, 7, 6, 6],
-    'Категория': ['Еда', 'Транспорт', 'Развлечения', 'Еда', 'Транспорт', 'Развлечения'],
-    'Сумма': [5000, 3000, 2000, 4000, 2500, 1000]
-})
+sheet_id = "1-rxT9EY-rCqRbO_cNwngIcr1Z0qDgmr4dvyY-LXPkv4"
+traty = pd.read_csv(f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv")
+traty['Сумма'] = traty['Сумма'].str.replace(',', '.')
+traty['Сумма']=traty['Сумма'].astype('float')
 
 # Функция для месячной таблицы и диаграммы
 def traty_mes(year, month):
