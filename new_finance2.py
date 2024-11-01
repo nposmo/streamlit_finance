@@ -76,4 +76,4 @@ for i, (wedge, row) in enumerate(zip(wedges, traty_above_5.itertuples())):
 st.pyplot(plt)
 
 # Вывод таблицы с форматированием для отображения целых чисел
-st.dataframe(traty_above_5.drop(columns=['Процент']).reset_index(drop=True).style.format({'Сумма': '{:.0f}'}).replace(",", " "), use_container_width=True)
+st.dataframe(traty_above_5.drop(columns=['Процент']).reset_index(drop=True).style.format({'Сумма': '{:,.0f}'.replace(',', ' ')}), use_container_width=True)
