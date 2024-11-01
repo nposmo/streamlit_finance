@@ -19,12 +19,20 @@ def traty_mes(year, month):
     
     traty_total = traty_mesyc['Сумма'].sum()
     traty_mesyc['Процент'] = (traty_mesyc['Сумма'] / traty_total) * 100
+    
+    # Ограничение категорий с долей менее 5%
+    traty_mesyc_above_5 = traty_mesyc[traty_mesyc['Процент'] >= 5]
+    other_sum = traty_mesyc[traty_mesyc['Процент'] < 5]['Сумма'].sum()
+    
+    # Добавляем категорию "Другие" для категорий с долей менее 5%
+    if other_sum > 0:
+        traty_mesyc_above_5 = pd.concat([traty_mesyc_above_5, pd.DataFrame({'Категория': ['Другие'], 'Сумма': [other_sum], 'Процент': [other_sum / traty_total * 100]})])
 
     # Построение круговой диаграммы с процентами
     plt.figure(figsize=(8, 6))
-    wedges, texts = plt.pie(traty_mesyc['Сумма'], startangle=140, radius=1)
+    wedges, texts = plt.pie(traty_mesyc_above_5['Сумма'], startangle=140, radius=1)
     
-    for i, (wedge, row) in enumerate(zip(wedges, traty_mesyc.itertuples())):
+    for i, (wedge, row) in enumerate(zip(wedges, traty_mesyc_above_5.itertuples())):
         angle = (wedge.theta2 - wedge.theta1) / 2 + wedge.theta1
         x = 1.2 * cos(angle * pi / 180)
         y = 1.2 * sin(angle * pi / 180)
@@ -32,12 +40,10 @@ def traty_mes(year, month):
                      ha='center', va='center', fontsize=10, color='black',
                      arrowprops=dict(arrowstyle="-", color='gray'))
 
-    #plt.suptitle(f"Распределение трат за {month}/{year}", fontsize=14, y=1.05)
     st.pyplot(plt)
 
     # Вывод таблицы без процентов и индекса
-    st.write(traty_mesyc.drop(columns=['Процент']).reset_index(drop=True))
-    #st.dataframe(traty_mesyc.drop(columns=['Процент']).reset_index(drop=True), use_container_width=True)
+    st.dataframe(traty_mesyc_above_5.drop(columns=['Процент']).reset_index(drop=True), use_container_width=False)
 
 # Функция для годовой таблицы и диаграммы
 def traty_god(year):
@@ -48,12 +54,20 @@ def traty_god(year):
     
     traty_total = traty_godic['Сумма'].sum()
     traty_godic['Процент'] = (traty_godic['Сумма'] / traty_total) * 100
+    
+    # Ограничение категорий с долей менее 5%
+    traty_godic_above_5 = traty_godic[traty_godic['Процент'] >= 5]
+    other_sum = traty_godic[traty_godic['Процент'] < 5]['Сумма'].sum()
+    
+    # Добавляем категорию "Другие" для категорий с долей менее 5%
+    if other_sum > 0:
+        traty_godic_above_5 = pd.concat([traty_godic_above_5, pd.DataFrame({'Категория': ['Другие'], 'Сумма': [other_sum], 'Процент': [other_sum / traty_total * 100]})])
 
     # Построение круговой диаграммы с процентами
     plt.figure(figsize=(8, 6))
-    wedges, texts = plt.pie(traty_godic['Сумма'], startangle=140, radius=1)
+    wedges, texts = plt.pie(traty_godic_above_5['Сумма'], startangle=140, radius=1)
     
-    for i, (wedge, row) in enumerate(zip(wedges, traty_godic.itertuples())):
+    for i, (wedge, row) in enumerate(zip(wedges, traty_godic_above_5.itertuples())):
         angle = (wedge.theta2 - wedge.theta1) / 2 + wedge.theta1
         x = 1.2 * cos(angle * pi / 180)
         y = 1.2 * sin(angle * pi / 180)
@@ -61,12 +75,11 @@ def traty_god(year):
                      ha='center', va='center', fontsize=10, color='black',
                      arrowprops=dict(arrowstyle="-", color='gray'))
 
-    #plt.suptitle(f"Распределение трат за {year}", fontsize=14, y=1.05)
     st.pyplot(plt)
 
     # Вывод таблицы без процентов и индекса
-    st.write(traty_godic.drop(columns=['Процент']).reset_index(drop=True))
-    #st.dataframe(traty_godic.drop(columns=['Процент']).reset_index(drop=True), use_container_width=True)
+    #st.write(traty_godic_above_5.drop(columns=['Процент']).reset_index(drop=True))
+    st.dataframe(traty_godic_above_5.drop(columns=['Процент']).reset_index(drop=True), use_container_width=False)
 
 # Интерфейс Streamlit
 st.sidebar.header("Параметры фильтрации")
