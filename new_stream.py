@@ -2,7 +2,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-from math import cos, sin, pi
+from math import cos, sin, pi, ceil
 
 # Пример данных (замените на свои)
 sheet_id = "1-rxT9EY-rCqRbO_cNwngIcr1Z0qDgmr4dvyY-LXPkv4"
@@ -43,7 +43,7 @@ def traty_mes(year, month):
     st.pyplot(plt)
 
     # Вывод таблицы без процентов и индекса
-    st.dataframe(traty_mesyc_above_5.drop(columns=['Процент']).reset_index(drop=True), use_container_width=False)
+    st.dataframe(traty_mesyc_above_5.drop(columns=['Процент']).reset_index(drop=True).style.format({'Сумма': '{:.0f}'}), use_container_width=False)
 
 # Функция для годовой таблицы и диаграммы
 def traty_god(year):
@@ -79,7 +79,7 @@ def traty_god(year):
 
     # Вывод таблицы без процентов и индекса
     #st.write(traty_godic_above_5.drop(columns=['Процент']).reset_index(drop=True))
-    st.dataframe(traty_godic_above_5.drop(columns=['Процент']).reset_index(drop=True), use_container_width=False)
+    st.dataframe(traty_godic_above_5.drop(columns=['Процент']).reset_index(drop=True).style.format({'Сумма': '{:.0f}'}), use_container_width=False)
 
 # Интерфейс Streamlit
 st.sidebar.header("Параметры фильтрации")
@@ -94,7 +94,7 @@ if month == "Все месяцы":
         .reset_index() \
         .sort_values('Сумма', ascending=False)
     traty_total = traty_godic['Сумма'].sum()
-    st.header(f"Траты за {year}: {traty_total:,}".replace(",", " "))
+    st.header(f"Траты за {year}: {traty_total:,.0f}".replace(",", " "))
     traty_god(year)
 else:
     traty_mesyc = traty[(traty['Год'] == year) & (traty['Месяц'] == int(month))] \
@@ -102,5 +102,5 @@ else:
         .reset_index() \
         .sort_values('Сумма', ascending=False)
     traty_total = traty_mesyc['Сумма'].sum()
-    st.header(f"Траты за {month}/{year}: {traty_total:,}".replace(",", " "))
+    st.header(f"Траты за {month}/{year}: {traty_total:,.0f}".replace(",", " "))
     traty_mes(year, int(month))
