@@ -38,8 +38,8 @@ def traty_mes(year, month):
     st.pyplot(plt)
 
     # Вывод таблицы без процентов и индекса
-    #st.write(traty_mesyc.drop(columns=['Процент']).reset_index(drop=True))
-    st.dataframe(traty_mesyc.drop(columns=['Процент']).reset_index(drop=True), use_container_width=True)
+    st.write(traty_mesyc.drop(columns=['Процент']).reset_index(drop=True))
+    #st.dataframe(traty_mesyc.drop(columns=['Процент']).reset_index(drop=True), use_container_width=True)
 
 # Функция для годовой таблицы и диаграммы
 def traty_god(year):
@@ -67,8 +67,8 @@ def traty_god(year):
     st.pyplot(plt)
 
     # Вывод таблицы без процентов и индекса
-    #st.write(traty_godic.drop(columns=['Процент']).reset_index(drop=True))
-    st.dataframe(traty_godic.drop(columns=['Процент']).reset_index(drop=True), use_container_width=True)
+    st.write(traty_godic.drop(columns=['Процент']).reset_index(drop=True))
+    #st.dataframe(traty_godic.drop(columns=['Процент']).reset_index(drop=True), use_container_width=True)
 
 # Интерфейс Streamlit
 st.sidebar.header("Параметры фильтрации")
